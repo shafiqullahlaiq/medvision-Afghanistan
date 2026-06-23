@@ -1,0 +1,1399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MedVision Afghanistan — Market Validation Survey</title>
+<style>
+  :root {
+    --blue-deep: #0D3B6E;
+    --blue-mid: #1A5EA8;
+    --blue-light: #E8F1FB;
+    --green: #1A8A60;
+    --amber: #C97A0A;
+    --red: #C0392B;
+    --text: #1A1A2E;
+    --muted: #5A6070;
+    --border: #D4DCE8;
+    --bg: #F7F9FC;
+    --white: #FFFFFF;
+    --radius: 10px;
+    --shadow: 0 2px 12px rgba(13,59,110,0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .site-header {
+    background: linear-gradient(135deg, var(--blue-deep) 0%, var(--blue-mid) 100%);
+    color: white;
+    padding: 2.5rem 1.5rem 2rem;
+    text-align: center;
+  }
+  .site-header .logo {
+    font-size: 11px; font-weight: 600; letter-spacing: .12em;
+    text-transform: uppercase; opacity: .7; margin-bottom: .75rem;
+  }
+  .site-header h1 {
+    font-size: clamp(20px, 4vw, 30px); font-weight: 700;
+    line-height: 1.25; margin-bottom: .6rem;
+  }
+  .site-header p {
+    font-size: 14px; opacity: .85; max-width: 560px;
+    margin: 0 auto .75rem;
+  }
+  .header-tags {
+    display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
+  }
+  .tag {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 20px; padding: 3px 12px;
+    font-size: 12px; color: white;
+  }
+
+  /* PROGRESS */
+  .progress-bar-wrap {
+    background: var(--white); border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 100;
+    padding: .75rem 1.5rem;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .progress-label { font-size: 13px; color: var(--muted); white-space: nowrap; }
+  .progress-track {
+    flex: 1; height: 6px; background: var(--border);
+    border-radius: 3px; overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%; background: var(--blue-mid);
+    border-radius: 3px; transition: width .4s ease;
+  }
+  .progress-pct { font-size: 13px; font-weight: 600; color: var(--blue-mid); min-width: 36px; text-align: right; }
+
+  /* SECTION STEPS */
+  .steps-nav {
+    max-width: 720px; margin: 1.25rem auto 0; padding: 0 1.5rem;
+    display: flex; gap: 6px; flex-wrap: wrap;
+  }
+  .step-dot {
+    width: 30px; height: 30px; border-radius: 50%;
+    border: 2px solid var(--border); background: var(--white);
+    font-size: 12px; font-weight: 600; color: var(--muted);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: all .2s; flex-shrink: 0;
+  }
+  .step-dot.active { border-color: var(--blue-mid); background: var(--blue-mid); color: white; }
+  .step-dot.done { border-color: var(--green); background: var(--green); color: white; }
+
+  /* MAIN */
+  main { max-width: 720px; margin: 1.5rem auto 2rem; padding: 0 1rem; }
+
+  /* SECTION CARD */
+  .section-card {
+    background: var(--white); border-radius: var(--radius);
+    border: 1px solid var(--border); box-shadow: var(--shadow);
+    padding: 2rem 1.75rem; margin-bottom: 1.25rem;
+    display: none;
+  }
+  .section-card.active { display: block; }
+  .section-eyebrow {
+    font-size: 11px; font-weight: 700; color: var(--blue-mid);
+    text-transform: uppercase; letter-spacing: .08em;
+    margin-bottom: .4rem;
+  }
+  .section-title {
+    font-size: 22px; font-weight: 700; margin-bottom: .4rem;
+    color: var(--blue-deep);
+  }
+  .section-desc {
+    font-size: 14px; color: var(--muted); line-height: 1.7;
+    padding-bottom: 1.25rem; border-bottom: 1px solid var(--border);
+    margin-bottom: 1.5rem;
+  }
+
+  /* CONCEPT BOX */
+  .concept-box {
+    background: var(--blue-light); border-left: 4px solid var(--blue-mid);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 1.1rem 1.25rem; margin-bottom: 1.5rem;
+  }
+  .concept-box p { font-size: 14px; line-height: 1.75; color: var(--blue-deep); }
+
+  /* QUESTION BLOCKS */
+  .q-block { margin-bottom: 1.5rem; }
+  .q-label {
+    font-size: 15px; font-weight: 600; color: var(--text);
+    margin-bottom: .2rem; line-height: 1.4;
+  }
+  .q-required { color: var(--red); margin-left: 2px; }
+  .q-hint {
+    font-size: 12px; color: var(--muted); margin-bottom: .6rem;
+    line-height: 1.5;
+  }
+
+  /* INPUTS */
+  input[type="text"], input[type="email"], select, textarea {
+    width: 100%; padding: 10px 14px;
+    border: 1.5px solid var(--border); border-radius: 8px;
+    font-size: 14px; font-family: inherit;
+    background: var(--white); color: var(--text);
+    transition: border-color .2s, box-shadow .2s;
+    appearance: none;
+  }
+  input[type="text"]:focus, input[type="email"]:focus,
+  select:focus, textarea:focus {
+    outline: none; border-color: var(--blue-mid);
+    box-shadow: 0 0 0 3px rgba(26,94,168,0.12);
+  }
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24'%3E%3Cpath fill='%235A6070' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 12px center;
+    padding-right: 36px; cursor: pointer;
+  }
+  textarea { min-height: 90px; resize: vertical; line-height: 1.6; }
+
+  /* LIKERT */
+  .likert-wrap { display: flex; gap: 6px; margin-top: .5rem; flex-wrap: wrap; }
+  .likert-option { flex: 1; min-width: 56px; }
+  .likert-option input { display: none; }
+  .likert-option label {
+    display: flex; flex-direction: column; align-items: center;
+    padding: 10px 4px 8px; border: 1.5px solid var(--border);
+    border-radius: 8px; cursor: pointer; transition: all .15s;
+    text-align: center;
+  }
+  .likert-option label .num {
+    font-size: 16px; font-weight: 700; color: var(--muted);
+    display: block; margin-bottom: 4px;
+  }
+  .likert-option label .lbl {
+    font-size: 10px; color: var(--muted); line-height: 1.3;
+    display: block;
+  }
+  .likert-option input:checked + label {
+    border-color: var(--blue-mid); background: var(--blue-light);
+  }
+  .likert-option input:checked + label .num { color: var(--blue-mid); }
+  .likert-option input:checked + label .lbl { color: var(--blue-deep); }
+  .likert-option label:hover { border-color: var(--blue-mid); background: var(--blue-light); }
+
+  /* CHECKBOX GRID */
+  .check-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: .5rem; }
+  @media(max-width:480px){ .check-grid { grid-template-columns: 1fr; } }
+  .check-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 10px 12px; border: 1.5px solid var(--border);
+    border-radius: 8px; cursor: pointer; transition: all .15s;
+    font-size: 13px; color: var(--text); background: var(--white);
+  }
+  .check-item input[type="checkbox"] {
+    width: 16px; height: 16px; flex-shrink: 0; cursor: pointer;
+    accent-color: var(--blue-mid); margin-top: 1px;
+  }
+  .check-item:hover { border-color: var(--blue-mid); background: var(--blue-light); }
+
+  /* RANK */
+  .rank-list { list-style: none; margin-top: .5rem; }
+  .rank-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px; border: 1.5px solid var(--border);
+    border-radius: 8px; margin-bottom: 5px; cursor: grab;
+    background: var(--white); font-size: 14px;
+    transition: box-shadow .15s; user-select: none;
+  }
+  .rank-item.dragging { opacity: .5; box-shadow: var(--shadow); }
+  .rank-item.drag-over { border-color: var(--blue-mid); background: var(--blue-light); }
+  .rank-num {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: var(--blue-light); color: var(--blue-mid);
+    font-size: 12px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .rank-grip { color: var(--border); font-size: 18px; flex-shrink: 0; line-height: 1; }
+  .rank-hint { font-size: 11px; color: var(--muted); margin-top: 5px; }
+
+  /* NAVIGATION */
+  .nav-row {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 1.75rem; padding-top: 1.25rem;
+    border-top: 1px solid var(--border);
+  }
+  .btn {
+    padding: 11px 24px; border-radius: 8px; font-size: 14px;
+    font-weight: 600; font-family: inherit; cursor: pointer;
+    border: 1.5px solid var(--border); background: var(--white);
+    color: var(--muted); transition: all .15s;
+  }
+  .btn:hover { border-color: var(--blue-mid); color: var(--blue-mid); }
+  .btn:disabled { opacity: .4; cursor: not-allowed; pointer-events: none; }
+  .btn-primary {
+    background: var(--blue-mid); border-color: var(--blue-mid);
+    color: white; padding: 11px 28px;
+  }
+  .btn-primary:hover { background: var(--blue-deep); border-color: var(--blue-deep); color: white; }
+  .btn-submit {
+    background: var(--green); border-color: var(--green); color: white;
+  }
+  .btn-submit:hover { background: #136e4c; border-color: #136e4c; color: white; }
+
+  /* THANK YOU / SUMMARY */
+  #thank-you { display: none; }
+  .ty-hero {
+    background: linear-gradient(135deg, var(--blue-deep), var(--blue-mid));
+    color: white; text-align: center; padding: 3rem 2rem;
+    border-radius: var(--radius); margin-bottom: 1.5rem;
+  }
+  .ty-icon { font-size: 3rem; margin-bottom: 1rem; }
+  .ty-hero h2 { font-size: 26px; margin-bottom: .5rem; }
+  .ty-hero p { font-size: 15px; opacity: .85; max-width: 480px; margin: 0 auto; }
+  .summary-card {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1rem;
+  }
+  .summary-card h3 {
+    font-size: 14px; font-weight: 700; color: var(--blue-deep);
+    text-transform: uppercase; letter-spacing: .06em;
+    margin-bottom: 1rem; padding-bottom: .75rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .summary-row {
+    display: flex; gap: 10px; margin-bottom: .6rem;
+    font-size: 13px; align-items: flex-start;
+  }
+  .summary-row .s-key { color: var(--muted); min-width: 140px; flex-shrink: 0; }
+  .summary-row .s-val { color: var(--text); font-weight: 500; }
+  .score-widget {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1rem;
+  }
+  .score-bar-row {
+    display: flex; align-items: center; gap: 10px; margin-bottom: .7rem;
+  }
+  .score-bar-row .label { font-size: 13px; min-width: 150px; flex-shrink: 0; }
+  .bar-track { flex: 1; height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 4px; }
+  .bar-pct { font-size: 12px; font-weight: 700; min-width: 40px; text-align: right; }
+  .verdict-banner {
+    border-radius: var(--radius); padding: 1.25rem 1.5rem;
+    margin-bottom: 1.5rem; border: 1.5px solid;
+  }
+  .verdict-banner.go { background: #EBF7F0; border-color: #3DBE87; }
+  .verdict-banner.pivot { background: #FEF6E4; border-color: #F0A832; }
+  .verdict-banner.nogo { background: #FDECEA; border-color: #E57373; }
+  .verdict-banner h3 { font-size: 18px; margin-bottom: .35rem; }
+  .verdict-banner.go h3 { color: #0B6E3C; }
+  .verdict-banner.pivot h3 { color: #7A4A05; }
+  .verdict-banner.nogo h3 { color: #8B1A1A; }
+  .verdict-banner p { font-size: 13px; line-height: 1.7; }
+  .verdict-banner.go p { color: #145C32; }
+  .verdict-banner.pivot p { color: #7A4A05; }
+  .verdict-banner.nogo p { color: #8B1A1A; }
+
+  /* RESPONSIVE */
+  @media(max-width: 600px) {
+    .section-card { padding: 1.5rem 1.25rem; }
+    .likert-wrap { gap: 4px; }
+    .likert-option label { padding: 8px 2px 6px; }
+    .likert-option label .num { font-size: 14px; }
+    .likert-option label .lbl { font-size: 9px; }
+    .nav-row { flex-direction: column; gap: 10px; }
+    .nav-row .btn { width: 100%; text-align: center; }
+  }
+  @media print {
+    .progress-bar-wrap, .steps-nav, .nav-row, #thank-you { display: none !important; }
+    .section-card { display: block !important; box-shadow: none; border: 1px solid #ccc; page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="logo">MedVision Afghanistan · Customer Discovery Research</div>
+  <h1>AI Medical Imaging Platform<br>Market Validation Survey</h1>
+  <p>Your responses will determine whether this platform should be built, modified, or abandoned. All responses are confidential and used only for research purposes. Takes approximately 10–15 minutes.</p>
+  <div class="header-tags">
+    <span class="tag">8 Sections</span>
+    <span class="tag">Confidential</span>
+    <span class="tag">Healthcare Professionals Only</span>
+    <span class="tag">Afghanistan Focus</span>
+  </div>
+</header>
+
+<div class="progress-bar-wrap">
+  <span class="progress-label" id="progress-label">Section 1 of 8</span>
+  <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:12%"></div></div>
+  <span class="progress-pct" id="progress-pct">12%</span>
+</div>
+
+<div class="steps-nav" id="steps-nav">
+  <div class="step-dot active" onclick="jumpTo(0)" title="Respondent Info">1</div>
+  <div class="step-dot" onclick="jumpTo(1)" title="Current Workflow">2</div>
+  <div class="step-dot" onclick="jumpTo(2)" title="Pain Points">3</div>
+  <div class="step-dot" onclick="jumpTo(3)" title="AI Acceptance">4</div>
+  <div class="step-dot" onclick="jumpTo(4)" title="Product Features">5</div>
+  <div class="step-dot" onclick="jumpTo(5)" title="Pricing">6</div>
+  <div class="step-dot" onclick="jumpTo(6)" title="Trust & Security">7</div>
+  <div class="step-dot" onclick="jumpTo(7)" title="Pilot Program">8</div>
+</div>
+
+<main id="survey-main">
+
+  <!-- SECTION 1 -->
+  <div class="section-card active" id="sec-0">
+    <div class="section-eyebrow">Section 1 of 8</div>
+    <div class="section-title">About You</div>
+    <div class="section-desc">Helps us understand your role and the context of your facility. All questions are optional except where marked required.</div>
+
+    <div class="q-block">
+      <div class="q-label">Your current role / job title <span class="q-required">*</span></div>
+      <select id="q1_1" required>
+        <option value="">Select your role…</option>
+        <option>General Practitioner (GP)</option>
+        <option>Specialist Physician</option>
+        <option>Radiologist</option>
+        <option>Clinic Owner / Medical Director</option>
+        <option>Hospital Administrator</option>
+        <option>Diagnostic Center Manager</option>
+        <option>Nurse / Paramedic</option>
+        <option>Other healthcare professional</option>
+      </select>
+    </div>
+
+    <div class="q-block">
+      <div class="q-label">Medical specialty (if applicable)</div>
+      <div class="q-hint">e.g. Cardiology, Orthopedics, General Medicine, Radiology</div>
+      <input type="text" id="q1_2" placeholder="Your specialty…">
+    </div>
+
+    <div class="q-block">
+      <div class="q-label">Years of clinical or administrative experience <span class="q-required">*</span></div>
+      <select id="q1_3" required>
+        <option value="">Select…</option>
+        <option>0–2 years</option>
+        <option>3–5 years</option>
+        <option>6–10 years</option>
+        <option>11–20 years</option>
+        <option>More than 20 years</option>
+      </select>
+    </div>
+
+    <div class="q-block">
+      <div class="q-label">Type of organization where you work <span class="q-required">*</span></div>
+      <select id="q1_4" required>
+        <option value="">Select…</option>
+        <option>Small private clinic (fewer than 10 staff)</option>
+        <option>Multi-specialty private clinic</option>
+        <option>Private hospital</option>
+        <option>Public / government hospital</option>
+        <option>Diagnostic center</option>
+        <option>Radiology-only practice</option>
+        <option>Other</option>
+      </select>
+    </div>
+
+    <div class="q-block">
+      <div class="q-label">City / District <span class="q-required">*</span></div>
+      <input type="text" id="q1_5" placeholder="e.g. Kabul, District 3" required>
+    </div>
+
+    <div class="q-block">
+      <div class="q-label">Approximately how many patients does your facility see per month?</div>
+      <select id="q1_6">
+        <option value="">Select…</option>
+        <option>Fewer than 50 patients</option>
+        <option>50–200 patients</option>
+        <option>201–500 patients</option>
+        <option>501–1,000 patients</option>
+        <option>More than 1,000 patients</option>
+      </select>
+    </div>
+
+    <div class="q-block">
+      <div class="q-label">Approximately how many medical images (X-ray, CT, MRI, etc.) are ordered per month at your facility?</div>
+      <select id="q1_7">
+        <option value="">Select…</option>
+        <option>Fewer than 10 images</option>
+        <option>10–50 images</option>
+        <option>51–200 images</option>
+        <option>201–500 images</option>
+        <option>More than 500 images</option>
+      </select>
+    </div>
+
+    <div class="q-block">
+      <div class="q-label">How involved are you in purchasing decisions for technology or software at your facility? <span class="q-required">*</span></div>
+      <div class="likert-wrap">
+        <div class="likert-option"><input type="radio" name="q1_8" id="q1_8_1" value="1"><label for="q1_8_1"><span class="num">1</span><span class="lbl">No involvement</span></label></div>
+        <div class="likert-option"><input type="radio" name="q1_8" id="q1_8_2" value="2"><label for="q1_8_2"><span class="num">2</span><span class="lbl">Minor input</span></label></div>
+        <div class="likert-option"><input type="radio" name="q1_8" id="q1_8_3" value="3"><label for="q1_8_3"><span class="num">3</span><span class="lbl">Consulted</span></label></div>
+        <div class="likert-option"><input type="radio" name="q1_8" id="q1_8_4" value="4"><label for="q1_8_4"><span class="num">4</span><span class="lbl">Co-decide</span></label></div>
+        <div class="likert-option"><input type="radio" name="q1_8" id="q1_8_5" value="5"><label for="q1_8_5"><span class="num">5</span><span class="lbl">Final decision</span></label></div>
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn" disabled>← Back</button>
+      <button class="btn btn-primary" onclick="navigate(1)">Next: Current Workflow →</button>
+    </div>
+  </div>
+
+  <!-- SECTION 2 -->
+  <div class="section-card" id="sec-1">
+    <div class="section-eyebrow">Section 2 of 8</div>
+    <div class="section-title">Your Current Imaging Workflow</div>
+    <div class="section-desc">Help us understand how imaging and reporting currently works at your facility — including turnaround times, existing systems, and pain points.</div>
+
+    <div class="q-block">
+      <div class="q-label">How do you currently process medical imaging reports? <span class="q-required">*</span></div>
+      <select id="q2_1" required>
+        <option value="">Select…</option>
+        <option>In-house radiologist reads and reports</option>
+        <option>Images sent to external / outsourced radiologist</option>
+        <option>Clinician reads images without specialist support</option>
+        <option>Combination of above approaches</option>
+        <option>No formal reporting process</option>
+      </select>
+    </div>
+
+    <div class="q-block">
+      <div class="q-label">What is the typical turnaround time for a radiology report at your facility? <span class="q-required">*</span></div>
+      <select id="q2_2" required>
+        <option value="">Select…</option>
+        <option>Same day (under 6 hours)</option>
+        <option>1 day</option>
+        <option>2–3 days</option>
+        <option>4–7 days</option>
+        <option>More than 1 week</option>
+        <option>No consistent turnaround — very variable</option>
+      </select>
+    </div>
+
+    <div class="q-block">
+      <div class="q-label">Do you currently use any imaging software, PACS, or RIS system?</div>
+      <select id="q2_3">
+        <option value="">Select…</option>
+        <option>Yes — PACS (Picture Archiving System)</option>
+        <option>Yes — RIS (Radiology Information System)</option>
+        <option>Yes — both PACS and RIS</option>
+        <option>Basic image viewer only</option>
+        <option>No software — physical films only</option>
+        <option>Digital images but no management system</option>
+      </select>
+    </div>
+
+    <div class="q-block">
+      <div class="q-label">Overall, how satisfied are you with your current imaging reporting process? <span class="q-required">*</span></div>
+      <div class="likert-wrap">
+        <div class="likert-option"><input type="radio" name="q2_4" id="q2_4_1" value="1"><label for="q2_4_1"><span class="num">1</span><span class="lbl">Very dissatisfied</span></label></div>
+        <div class="likert-option"><input type="radio" name="q2_4" id="q2_4_2" value="2"><label for="q2_4_2"><span class="num">2</span><span class="lbl">Dissatisfied</span></label></div>
+        <div class="likert-option"><input type="radio" name="q2_4" id="q2_4_3" value="3"><label for="q2_4_3"><span class="num">3</span><span class="lbl">Neutral</span></label></div>
+        <div class="likert-option"><input type="radio" name="q2_4" id="q2_4_4" value="4"><label for="q2_4_4"><span class="num">4</span><span class="lbl">Satisfied</span></label></div>
+        <div class="likert-option"><input type="radio" name="q2_4" id="q2_4_5" value="5"><label for="q2_4_5"><span class="num">5</span><span class="lbl">Very satisfied</span></label></div>
+      </div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-label">Do you ever send images to radiologists in other cities or countries for remote reading?</div>
+      <select id="q2_5">
+        <option value="">Select…</option>
+        <option>Yes, regularly</option>
+        <option>Yes, occasionally</option>
+        <option>Rarely</option>
+        <option>Never</option>
+      </select>
+    </div>
+
+    <div class="q-block">
+      <div class="q-label">In your own words, what is the biggest problem with your current imaging workflow?</div>
+      <textarea id="q2_6" placeholder="Describe your single biggest challenge…"></textarea>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn" onclick="navigate(-1)">← Back</button>
+      <button class="btn btn-primary" onclick="navigate(1)">Next: Pain Points →</button>
+    </div>
+  </div>
+
+  <!-- SECTION 3 -->
+  <div class="section-card" id="sec-2">
+    <div class="section-eyebrow">Section 3 of 8</div>
+    <div class="section-title">Pain Point Validation</div>
+    <div class="section-desc">Be as honest as possible — there are no right or wrong answers. This section helps us understand how serious the problem really is.</div>
+
+    <div class="q-block">
+      <div class="q-label">How often does your facility experience delays in receiving radiology reports? <span class="q-required">*</span></div>
+      <div class="likert-wrap">
+        <div class="likert-option"><input type="radio" name="q3_1" id="q3_1_1" value="1"><label for="q3_1_1"><span class="num">1</span><span class="lbl">Never</span></label></div>
+        <div class="likert-option"><input type="radio" name="q3_1" id="q3_1_2" value="2"><label for="q3_1_2"><span class="num">2</span><span class="lbl">Rarely</span></label></div>
+        <div class="likert-option"><input type="radio" name="q3_1" id="q3_1_3" value="3"><label for="q3_1_3"><span class="num">3</span><span class="lbl">Sometimes</span></label></div>
+        <div class="likert-option"><input type="radio" name="q3_1" id="q3_1_4" value="4"><label for="q3_1_4"><span class="num">4</span><span class="lbl">Often</span></label></div>
+        <div class="likert-option"><input type="radio" name="q3_1" id="q3_1_5" value="5"><label for="q3_1_5"><span class="num">5</span><span class="lbl">Daily</span></label></div>
+      </div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-label">How much do diagnostic delays impact patient outcomes at your facility? <span class="q-required">*</span></div>
+      <div class="likert-wrap">
+        <div class="likert-option"><input type="radio" name="q3_2" id="q3_2_1" value="1"><label for="q3_2_1"><span class="num">1</span><span class="lbl">No impact</span></label></div>
+        <div class="likert-option"><input type="radio" name="q3_2" id="q3_2_2" value="2"><label for="q3_2_2"><span class="num">2</span><span class="lbl">Minor</span></label></div>
+        <div class="likert-option"><input type="radio" name="q3_2" id="q3_2_3" value="3"><label for="q3_2_3"><span class="num">3</span><span class="lbl">Moderate</span></label></div>
+        <div class="likert-option"><input type="radio" name="q3_2" id="q3_2_4" value="4"><label for="q3_2_4"><span class="num">4</span><span class="lbl">Significant</span></label></div>
+        <div class="likert-option"><input type="radio" name="q3_2" id="q3_2_5" value="5"><label for="q3_2_5"><span class="num">5</span><span class="lbl">Severe</span></label></div>
+      </div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-label">Is there a shortage of qualified radiologists accessible to your facility? <span class="q-required">*</span></div>
+      <div class="likert-wrap">
+        <div class="likert-option"><input type="radio" name="q3_3" id="q3_3_1" value="1"><label for="q3_3_1"><span class="num">1</span><span class="lbl">Strongly disagree</span></label></div>
+        <div class="likert-option"><input type="radio" name="q3_3" id="q3_3_2" value="2"><label for="q3_3_2"><span class="num">2</span><span class="lbl">Disagree</span></label></div>
+        <div class="likert-option"><input type="radio" name="q3_3" id="q3_3_3" value="3"><label for="q3_3_3"><span class="num">3</span><span class="lbl">Neutral</span></label></div>
+        <div class="likert-option"><input type="radio" name="q3_3" id="q3_3_4" value="4"><label for="q3_3_4"><span class="num">4</span><span class="lbl">Agree</span></label></div>
+        <div class="likert-option"><input type="radio" name="q3_3" id="q3_3_5" value="5"><label for="q3_3_5"><span class="num">5</span><span class="lbl">Strongly agree</span></label></div>
+      </div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-label">How often do you require a second opinion on a difficult imaging case?</div>
+      <select id="q3_4">
+        <option value="">Select…</option>
+        <option>Never</option>
+        <option>Less than once a month</option>
+        <option>1–3 times per month</option>
+        <option>Weekly</option>
+        <option>Daily</option>
+      </select>
+    </div>
+
+    <div class="q-block">
+      <div class="q-label">How would you rate the cost of your current radiology reporting per image?</div>
+      <div class="likert-wrap">
+        <div class="likert-option"><input type="radio" name="q3_5" id="q3_5_1" value="1"><label for="q3_5_1"><span class="num">1</span><span class="lbl">Very low</span></label></div>
+        <div class="likert-option"><input type="radio" name="q3_5" id="q3_5_2" value="2"><label for="q3_5_2"><span class="num">2</span><span class="lbl">Low</span></label></div>
+        <div class="likert-option"><input type="radio" name="q3_5" id="q3_5_3" value="3"><label for="q3_5_3"><span class="num">3</span><span class="lbl">Acceptable</span></label></div>
+        <div class="likert-option"><input type="radio" name="q3_5" id="q3_5_4" value="4"><label for="q3_5_4"><span class="num">4</span><span class="lbl">High</span></label></div>
+        <div class="likert-option"><input type="radio" name="q3_5" id="q3_5_5" value="5"><label for="q3_5_5"><span class="num">5</span><span class="lbl">Very high</span></label></div>
+      </div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-label">How concerned are you about missed findings in imaging reports at your facility? <span class="q-required">*</span></div>
+      <div class="likert-wrap">
+        <div class="likert-option"><input type="radio" name="q3_6" id="q3_6_1" value="1"><label for="q3_6_1"><span class="num">1</span><span class="lbl">Not at all</span></label></div>
+        <div class="likert-option"><input type="radio" name="q3_6" id="q3_6_2" value="2"><label for="q3_6_2"><span class="num">2</span><span class="lbl">Slightly</span></label></div>
+        <div class="likert-option"><input type="radio" name="q3_6" id="q3_6_3" value="3"><label for="q3_6_3"><span class="num">3</span><span class="lbl">Moderately</span></label></div>
+        <div class="likert-option"><input type="radio" name="q3_6" id="q3_6_4" value="4"><label for="q3_6_4"><span class="num">4</span><span class="lbl">Very</span></label></div>
+        <div class="likert-option"><input type="radio" name="q3_6" id="q3_6_5" value="5"><label for="q3_6_5"><span class="num">5</span><span class="lbl">Extremely</span></label></div>
+      </div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-label">How much workload pressure do your clinicians or radiologists face from imaging volume?</div>
+      <div class="likert-wrap">
+        <div class="likert-option"><input type="radio" name="q3_7" id="q3_7_1" value="1"><label for="q3_7_1"><span class="num">1</span><span class="lbl">No pressure</span></label></div>
+        <div class="likert-option"><input type="radio" name="q3_7" id="q3_7_2" value="2"><label for="q3_7_2"><span class="num">2</span><span class="lbl">Low</span></label></div>
+        <div class="likert-option"><input type="radio" name="q3_7" id="q3_7_3" value="3"><label for="q3_7_3"><span class="num">3</span><span class="lbl">Moderate</span></label></div>
+        <div class="likert-option"><input type="radio" name="q3_7" id="q3_7_4" value="4"><label for="q3_7_4"><span class="num">4</span><span class="lbl">High</span></label></div>
+        <div class="likert-option"><input type="radio" name="q3_7" id="q3_7_5" value="5"><label for="q3_7_5"><span class="num">5</span><span class="lbl">Overwhelming</span></label></div>
+      </div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-label">If you could solve ONE problem in your imaging workflow today, what would it be?</div>
+      <textarea id="q3_8" placeholder="Your single biggest imaging challenge…"></textarea>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn" onclick="navigate(-1)">← Back</button>
+      <button class="btn btn-primary" onclick="navigate(1)">Next: AI Acceptance →</button>
+    </div>
+  </div>
+
+  <!-- SECTION 4 -->
+  <div class="section-card" id="sec-3">
+    <div class="section-eyebrow">Section 4 of 8</div>
+    <div class="section-title">AI Acceptance &amp; Trust</div>
+    <div class="section-desc">Please read the concept description below before answering. There are no right answers — your honest reaction is what matters.</div>
+
+    <div class="concept-box">
+      <p><strong>About MedVision:</strong> MedVision is an AI-powered platform that allows you to upload X-rays, CT scans, MRIs, and other medical images. The AI analyzes them and returns possible findings, highlighted regions of concern, confidence scores, and a draft radiology report — in under 2 minutes. The system is designed to assist your clinical judgment, not replace it. Your professional decision always takes precedence.</p>
+    </div>
+
+    <div class="q-block">
+      <div class="q-label">How useful would a platform like MedVision be for your facility? <span class="q-required">*</span></div>
+      <div class="likert-wrap">
+        <div class="likert-option"><input type="radio" name="q4_1" id="q4_1_1" value="1"><label for="q4_1_1"><span class="num">1</span><span class="lbl">Not useful</span></label></div>
+        <div class="likert-option"><input type="radio" name="q4_1" id="q4_1_2" value="2"><label for="q4_1_2"><span class="num">2</span><span class="lbl">Slightly</span></label></div>
+        <div class="likert-option"><input type="radio" name="q4_1" id="q4_1_3" value="3"><label for="q4_1_3"><span class="num">3</span><span class="lbl">Moderately</span></label></div>
+        <div class="likert-option"><input type="radio" name="q4_1" id="q4_1_4" value="4"><label for="q4_1_4"><span class="num">4</span><span class="lbl">Very useful</span></label></div>
+        <div class="likert-option"><input type="radio" name="q4_1" id="q4_1_5" value="5"><label for="q4_1_5"><span class="num">5</span><span class="lbl">Extremely useful</span></label></div>
+      </div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-label">How much do you trust AI systems to assist with medical image analysis? <span class="q-required">*</span></div>
+      <div class="likert-wrap">
+        <div class="likert-option"><input type="radio" name="q4_2" id="q4_2_1" value="1"><label for="q4_2_1"><span class="num">1</span><span class="lbl">No trust</span></label></div>
+        <div class="likert-option"><input type="radio" name="q4_2" id="q4_2_2" value="2"><label for="q4_2_2"><span class="num">2</span><span class="lbl">Low trust</span></label></div>
+        <div class="likert-option"><input type="radio" name="q4_2" id="q4_2_3" value="3"><label for="q4_2_3"><span class="num">3</span><span class="lbl">Moderate</span></label></div>
+        <div class="likert-option"><input type="radio" name="q4_2" id="q4_2_4" value="4"><label for="q4_2_4"><span class="num">4</span><span class="lbl">High trust</span></label></div>
+        <div class="likert-option"><input type="radio" name="q4_2" id="q4_2_5" value="5"><label for="q4_2_5"><span class="num">5</span><span class="lbl">Full trust</span></label></div>
+      </div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-label">How likely are you to use an AI imaging assistant if available at your facility? <span class="q-required">*</span></div>
+      <div class="likert-wrap">
+        <div class="likert-option"><input type="radio" name="q4_3" id="q4_3_1" value="1"><label for="q4_3_1"><span class="num">1</span><span class="lbl">Definitely not</span></label></div>
+        <div class="likert-option"><input type="radio" name="q4_3" id="q4_3_2" value="2"><label for="q4_3_2"><span class="num">2</span><span class="lbl">Unlikely</span></label></div>
+        <div class="likert-option"><input type="radio" name="q4_3" id="q4_3_3" value="3"><label for="q4_3_3"><span class="num">3</span><span class="lbl">Unsure</span></label></div>
+        <div class="likert-option"><input type="radio" name="q4_3" id="q4_3_4" value="4"><label for="q4_3_4"><span class="num">4</span><span class="lbl">Likely</span></label></div>
+        <div class="likert-option"><input type="radio" name="q4_3" id="q4_3_5" value="5"><label for="q4_3_5"><span class="num">5</span><span class="lbl">Definitely would</span></label></div>
+      </div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-label">What minimum accuracy rate would you require from AI findings before trusting them?</div>
+      <select id="q4_4">
+        <option value="">Select…</option>
+        <option>Any improvement over current process</option>
+        <option>At least 70% accuracy</option>
+        <option>At least 80% accuracy</option>
+        <option>At least 90% accuracy</option>
+        <option>At least 95% accuracy</option>
+        <option>I would not trust AI findings regardless of accuracy</option>
+      </select>
+    </div>
+
+    <div class="q-block">
+      <div class="q-label">What evidence would you need before adopting this platform? (Select all that apply)</div>
+      <div class="check-grid">
+        <label class="check-item"><input type="checkbox" name="q4_5" value="peer-reviewed"> Peer-reviewed clinical study</label>
+        <label class="check-item"><input type="checkbox" name="q4_5" value="local-pilot"> Local pilot results from Afghan facilities</label>
+        <label class="check-item"><input type="checkbox" name="q4_5" value="authority"> Endorsement from Afghan medical authority</label>
+        <label class="check-item"><input type="checkbox" name="q4_5" value="intl-approval"> International regulatory approval (FDA or CE)</label>
+        <label class="check-item"><input type="checkbox" name="q4_5" value="live-demo"> Live demo with my own patient cases</label>
+        <label class="check-item"><input type="checkbox" name="q4_5" value="trial"> Free trial period, no obligation</label>
+        <label class="check-item"><input type="checkbox" name="q4_5" value="colleague"> Recommendation from a trusted colleague</label>
+        <label class="check-item"><input type="checkbox" name="q4_5" value="none"> None — I would try it immediately</label>
+      </div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-label">What is your biggest concern about using AI for imaging analysis?</div>
+      <textarea id="q4_6" placeholder="Please share your honest concern…"></textarea>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn" onclick="navigate(-1)">← Back</button>
+      <button class="btn btn-primary" onclick="navigate(1)">Next: Product Features →</button>
+    </div>
+  </div>
+
+  <!-- SECTION 5 -->
+  <div class="section-card" id="sec-4">
+    <div class="section-eyebrow">Section 5 of 8</div>
+    <div class="section-title">Product Feature Priorities</div>
+    <div class="section-desc">Help us build what matters most. Drag items in the ranking list to reorder them from most valuable (top) to least valuable (bottom).</div>
+
+    <div class="q-block">
+      <div class="q-label">Drag to rank these features from most valuable (1) to least valuable (8) <span class="q-required">*</span></div>
+      <ul class="rank-list" id="rank-q5_1">
+        <li class="rank-item" draggable="true"><span class="rank-num">1</span><span class="rank-grip">⠿</span> AI-detected findings with description</li>
+        <li class="rank-item" draggable="true"><span class="rank-num">2</span><span class="rank-grip">⠿</span> Highlighted abnormal regions (heatmap overlay)</li>
+        <li class="rank-item" draggable="true"><span class="rank-num">3</span><span class="rank-grip">⠿</span> Confidence score per finding</li>
+        <li class="rank-item" draggable="true"><span class="rank-num">4</span><span class="rank-grip">⠿</span> Draft radiology report ready to edit</li>
+        <li class="rank-item" draggable="true"><span class="rank-num">5</span><span class="rank-grip">⠿</span> Facility analytics &amp; performance dashboard</li>
+        <li class="rank-item" draggable="true"><span class="rank-num">6</span><span class="rank-grip">⠿</span> Mobile app access (phone/tablet)</li>
+        <li class="rank-item" draggable="true"><span class="rank-num">7</span><span class="rank-grip">⠿</span> Reports in Dari language</li>
+        <li class="rank-item" draggable="true"><span class="rank-num">8</span><span class="rank-grip">⠿</span> Reports in Pashto language</li>
+      </ul>
+      <div class="rank-hint">Tip: Drag and drop to reorder. Number 1 = most valuable.</div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-label">How important is integration with your existing PACS or RIS system?</div>
+      <div class="likert-wrap">
+        <div class="likert-option"><input type="radio" name="q5_2" id="q5_2_1" value="1"><label for="q5_2_1"><span class="num">1</span><span class="lbl">Not important</span></label></div>
+        <div class="likert-option"><input type="radio" name="q5_2" id="q5_2_2" value="2"><label for="q5_2_2"><span class="num">2</span><span class="lbl">Low</span></label></div>
+        <div class="likert-option"><input type="radio" name="q5_2" id="q5_2_3" value="3"><label for="q5_2_3"><span class="num">3</span><span class="lbl">Neutral</span></label></div>
+        <div class="likert-option"><input type="radio" name="q5_2" id="q5_2_4" value="4"><label for="q5_2_4"><span class="num">4</span><span class="lbl">Important</span></label></div>
+        <div class="likert-option"><input type="radio" name="q5_2" id="q5_2_5" value="5"><label for="q5_2_5"><span class="num">5</span><span class="lbl">Essential / blocker</span></label></div>
+      </div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-label">How important is DICOM file format support?</div>
+      <div class="likert-wrap">
+        <div class="likert-option"><input type="radio" name="q5_3" id="q5_3_1" value="1"><label for="q5_3_1"><span class="num">1</span><span class="lbl">Not important</span></label></div>
+        <div class="likert-option"><input type="radio" name="q5_3" id="q5_3_2" value="2"><label for="q5_3_2"><span class="num">2</span><span class="lbl">Low</span></label></div>
+        <div class="likert-option"><input type="radio" name="q5_3" id="q5_3_3" value="3"><label for="q5_3_3"><span class="num">3</span><span class="lbl">Neutral</span></label></div>
+        <div class="likert-option"><input type="radio" name="q5_3" id="q5_3_4" value="4"><label for="q5_3_4"><span class="num">4</span><span class="lbl">Important</span></label></div>
+        <div class="likert-option"><input type="radio" name="q5_3" id="q5_3_5" value="5"><label for="q5_3_5"><span class="num">5</span><span class="lbl">Essential / blocker</span></label></div>
+      </div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-label">Which imaging modalities are most critical for your facility? (Select all that apply)</div>
+      <div class="check-grid">
+        <label class="check-item"><input type="checkbox" name="q5_4" value="xray"> X-ray (plain film)</label>
+        <label class="check-item"><input type="checkbox" name="q5_4" value="ct"> CT scan</label>
+        <label class="check-item"><input type="checkbox" name="q5_4" value="mri"> MRI</label>
+        <label class="check-item"><input type="checkbox" name="q5_4" value="ultrasound"> Ultrasound</label>
+        <label class="check-item"><input type="checkbox" name="q5_4" value="mammo"> Mammography</label>
+        <label class="check-item"><input type="checkbox" name="q5_4" value="skin"> Skin / dermatology images</label>
+        <label class="check-item"><input type="checkbox" name="q5_4" value="retinal"> Retinal / fundus images</label>
+        <label class="check-item"><input type="checkbox" name="q5_4" value="dental"> Dental X-ray</label>
+      </div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-label">Would you prefer the platform to be cloud-based or locally installed?</div>
+      <select id="q5_5">
+        <option value="">Select…</option>
+        <option>Cloud-based only (requires internet)</option>
+        <option>Local installation only (works offline)</option>
+        <option>Hybrid — cloud with offline fallback</option>
+        <option>No preference</option>
+      </select>
+    </div>
+
+    <div class="q-block">
+      <div class="q-label">Is there a feature not listed above that would be essential for you?</div>
+      <textarea id="q5_6" placeholder="Any critical feature not mentioned…"></textarea>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn" onclick="navigate(-1)">← Back</button>
+      <button class="btn btn-primary" onclick="navigate(1)">Next: Pricing →</button>
+    </div>
+  </div>
+
+  <!-- SECTION 6 -->
+  <div class="section-card" id="sec-5">
+    <div class="section-eyebrow">Section 6 of 8</div>
+    <div class="section-title">Pricing &amp; Budget</div>
+    <div class="section-desc">No pricing has been decided yet. Your honest answers will directly shape what we charge. There are no right or wrong answers.</div>
+
+    <div class="q-block">
+      <div class="q-label">What does your facility currently spend per month on radiology and reporting services?</div>
+      <select id="q6_1">
+        <option value="">Select…</option>
+        <option>Less than $50/month</option>
+        <option>$50–$200/month</option>
+        <option>$201–$500/month</option>
+        <option>$501–$1,000/month</option>
+        <option>$1,001–$3,000/month</option>
+        <option>More than $3,000/month</option>
+        <option>Not sure / variable</option>
+      </select>
+    </div>
+
+    <div class="q-block">
+      <div class="q-label">At what monthly price would MedVision seem SO CHEAP that you would question its quality? <span class="q-required">*</span></div>
+      <div class="q-hint">Van Westendorp: "Too cheap" threshold</div>
+      <select id="q6_2" required>
+        <option value="">Select…</option>
+        <option>Less than $10/month</option>
+        <option>$10–$30/month</option>
+        <option>$31–$60/month</option>
+        <option>$61–$100/month</option>
+        <option>$101–$200/month</option>
+        <option>More than $200/month</option>
+      </select>
+    </div>
+
+    <div class="q-block">
+      <div class="q-label">At what monthly price would MedVision seem like a GOOD DEAL — affordable and credible? <span class="q-required">*</span></div>
+      <div class="q-hint">Van Westendorp: "Cheap / bargain" threshold</div>
+      <select id="q6_3" required>
+        <option value="">Select…</option>
+        <option>Less than $30/month</option>
+        <option>$30–$75/month</option>
+        <option>$76–$150/month</option>
+        <option>$151–$300/month</option>
+        <option>$301–$500/month</option>
+        <option>More than $500/month</option>
+      </select>
+    </div>
+
+    <div class="q-block">
+      <div class="q-label">At what monthly price would MedVision seem EXPENSIVE but still worth considering? <span class="q-required">*</span></div>
+      <div class="q-hint">Van Westendorp: "Expensive" threshold</div>
+      <select id="q6_4" required>
+        <option value="">Select…</option>
+        <option>Less than $100/month</option>
+        <option>$100–$250/month</option>
+        <option>$251–$500/month</option>
+        <option>$501–$1,000/month</option>
+        <option>$1,001–$2,000/month</option>
+        <option>More than $2,000/month</option>
+      </select>
+    </div>
+
+    <div class="q-block">
+      <div class="q-label">At what monthly price would MedVision be SO EXPENSIVE you would not purchase it at all? <span class="q-required">*</span></div>
+      <div class="q-hint">Van Westendorp: "Too expensive" ceiling</div>
+      <select id="q6_5" required>
+        <option value="">Select…</option>
+        <option>Less than $200/month</option>
+        <option>$200–$500/month</option>
+        <option>$501–$1,000/month</option>
+        <option>$1,001–$2,000/month</option>
+        <option>More than $2,000/month</option>
+      </select>
+    </div>
+
+    <div class="q-block">
+      <div class="q-label">Which pricing model would your facility prefer?</div>
+      <select id="q6_6">
+        <option value="">Select…</option>
+        <option>Monthly flat subscription (unlimited images)</option>
+        <option>Per-image fee — pay only for what you use</option>
+        <option>Annual license (discounted vs monthly)</option>
+        <option>Enterprise contract — custom pricing</option>
+        <option>Free basic plan with paid premium features</option>
+      </select>
+    </div>
+
+    <div class="q-block">
+      <div class="q-label">Would you pay for MedVision if it reduced your reporting turnaround from 3 days to under 2 hours? <span class="q-required">*</span></div>
+      <div class="likert-wrap">
+        <div class="likert-option"><input type="radio" name="q6_7" id="q6_7_1" value="1"><label for="q6_7_1"><span class="num">1</span><span class="lbl">Definitely not</span></label></div>
+        <div class="likert-option"><input type="radio" name="q6_7" id="q6_7_2" value="2"><label for="q6_7_2"><span class="num">2</span><span class="lbl">Probably not</span></label></div>
+        <div class="likert-option"><input type="radio" name="q6_7" id="q6_7_3" value="3"><label for="q6_7_3"><span class="num">3</span><span class="lbl">Maybe</span></label></div>
+        <div class="likert-option"><input type="radio" name="q6_7" id="q6_7_4" value="4"><label for="q6_7_4"><span class="num">4</span><span class="lbl">Probably yes</span></label></div>
+        <div class="likert-option"><input type="radio" name="q6_7" id="q6_7_5" value="5"><label for="q6_7_5"><span class="num">5</span><span class="lbl">Definitely yes</span></label></div>
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn" onclick="navigate(-1)">← Back</button>
+      <button class="btn btn-primary" onclick="navigate(1)">Next: Trust &amp; Security →</button>
+    </div>
+  </div>
+
+  <!-- SECTION 7 -->
+  <div class="section-card" id="sec-6">
+    <div class="section-eyebrow">Section 7 of 8</div>
+    <div class="section-title">Trust, Security &amp; Compliance</div>
+    <div class="section-desc">Data privacy is critical in healthcare. Your answers will shape how we design data handling and compliance for Afghan facilities.</div>
+
+    <div class="q-block">
+      <div class="q-label">How concerned are you about patient data being stored on cloud servers outside Afghanistan? <span class="q-required">*</span></div>
+      <div class="likert-wrap">
+        <div class="likert-option"><input type="radio" name="q7_1" id="q7_1_1" value="1"><label for="q7_1_1"><span class="num">1</span><span class="lbl">Not concerned</span></label></div>
+        <div class="likert-option"><input type="radio" name="q7_1" id="q7_1_2" value="2"><label for="q7_1_2"><span class="num">2</span><span class="lbl">Slightly</span></label></div>
+        <div class="likert-option"><input type="radio" name="q7_1" id="q7_1_3" value="3"><label for="q7_1_3"><span class="num">3</span><span class="lbl">Moderately</span></label></div>
+        <div class="likert-option"><input type="radio" name="q7_1" id="q7_1_4" value="4"><label for="q7_1_4"><span class="num">4</span><span class="lbl">Very concerned</span></label></div>
+        <div class="likert-option"><input type="radio" name="q7_1" id="q7_1_5" value="5"><label for="q7_1_5"><span class="num">5</span><span class="lbl">This is a blocker</span></label></div>
+      </div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-label">Would you require patient data to be stored on servers located inside Afghanistan?</div>
+      <select id="q7_2">
+        <option value="">Select…</option>
+        <option>Absolutely required — local storage only</option>
+        <option>Strongly preferred but not essential</option>
+        <option>No strong preference</option>
+        <option>Comfortable with international cloud storage</option>
+      </select>
+    </div>
+
+    <div class="q-block">
+      <div class="q-label">How important is a complete audit trail of all AI recommendations?</div>
+      <div class="likert-wrap">
+        <div class="likert-option"><input type="radio" name="q7_3" id="q7_3_1" value="1"><label for="q7_3_1"><span class="num">1</span><span class="lbl">Not important</span></label></div>
+        <div class="likert-option"><input type="radio" name="q7_3" id="q7_3_2" value="2"><label for="q7_3_2"><span class="num">2</span><span class="lbl">Low</span></label></div>
+        <div class="likert-option"><input type="radio" name="q7_3" id="q7_3_3" value="3"><label for="q7_3_3"><span class="num">3</span><span class="lbl">Neutral</span></label></div>
+        <div class="likert-option"><input type="radio" name="q7_3" id="q7_3_4" value="4"><label for="q7_3_4"><span class="num">4</span><span class="lbl">Important</span></label></div>
+        <div class="likert-option"><input type="radio" name="q7_3" id="q7_3_5" value="5"><label for="q7_3_5"><span class="num">5</span><span class="lbl">Essential / blocker</span></label></div>
+      </div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-label">Are you aware of Afghan regulations governing storage of patient medical image data?</div>
+      <select id="q7_4">
+        <option value="">Select…</option>
+        <option>Yes — and the rules are strict</option>
+        <option>Yes — but the rules are unclear to me</option>
+        <option>Not aware of specific regulations</option>
+        <option>Not aware — but I assume regulations exist</option>
+      </select>
+    </div>
+
+    <div class="q-block">
+      <div class="q-label">Who in your organization would need to approve a data-sharing agreement with a technology vendor?</div>
+      <select id="q7_5">
+        <option value="">Select…</option>
+        <option>I can approve alone</option>
+        <option>Me + IT or security officer</option>
+        <option>Director / CEO approval only</option>
+        <option>Government ministry approval required</option>
+        <option>Board of directors approval required</option>
+        <option>Not sure</option>
+      </select>
+    </div>
+
+    <div class="q-block">
+      <div class="q-label">Would you be more comfortable if AI analysis happened on your local network rather than in the cloud?</div>
+      <div class="likert-wrap">
+        <div class="likert-option"><input type="radio" name="q7_6" id="q7_6_1" value="1"><label for="q7_6_1"><span class="num">1</span><span class="lbl">Cloud is fine</span></label></div>
+        <div class="likert-option"><input type="radio" name="q7_6" id="q7_6_2" value="2"><label for="q7_6_2"><span class="num">2</span><span class="lbl">Slight local preference</span></label></div>
+        <div class="likert-option"><input type="radio" name="q7_6" id="q7_6_3" value="3"><label for="q7_6_3"><span class="num">3</span><span class="lbl">Moderate preference</span></label></div>
+        <div class="likert-option"><input type="radio" name="q7_6" id="q7_6_4" value="4"><label for="q7_6_4"><span class="num">4</span><span class="lbl">Strong preference</span></label></div>
+        <div class="likert-option"><input type="radio" name="q7_6" id="q7_6_5" value="5"><label for="q7_6_5"><span class="num">5</span><span class="lbl">Local only — required</span></label></div>
+      </div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-label">What security or compliance requirement matters most to you?</div>
+      <textarea id="q7_7" placeholder="e.g. End-to-end encryption, data residency in Afghanistan, Ministry of Health approval…"></textarea>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn" onclick="navigate(-1)">← Back</button>
+      <button class="btn btn-primary" onclick="navigate(1)">Next: Pilot Program →</button>
+    </div>
+  </div>
+
+  <!-- SECTION 8 -->
+  <div class="section-card" id="sec-7">
+    <div class="section-eyebrow">Section 8 of 8 — Final Section</div>
+    <div class="section-title">Pilot Program &amp; Next Steps</div>
+    <div class="section-desc">We are looking for healthcare facilities to partner with for a free 30-day pilot. No commitment required to complete this survey.</div>
+
+    <div class="q-block">
+      <div class="q-label">Would you be willing to participate in a FREE 30-day pilot of MedVision at your facility? <span class="q-required">*</span></div>
+      <div class="likert-wrap">
+        <div class="likert-option"><input type="radio" name="q8_1" id="q8_1_1" value="1"><label for="q8_1_1"><span class="num">1</span><span class="lbl">Definitely not</span></label></div>
+        <div class="likert-option"><input type="radio" name="q8_1" id="q8_1_2" value="2"><label for="q8_1_2"><span class="num">2</span><span class="lbl">Probably not</span></label></div>
+        <div class="likert-option"><input type="radio" name="q8_1" id="q8_1_3" value="3"><label for="q8_1_3"><span class="num">3</span><span class="lbl">Unsure</span></label></div>
+        <div class="likert-option"><input type="radio" name="q8_1" id="q8_1_4" value="4"><label for="q8_1_4"><span class="num">4</span><span class="lbl">Probably yes</span></label></div>
+        <div class="likert-option"><input type="radio" name="q8_1" id="q8_1_5" value="5"><label for="q8_1_5"><span class="num">5</span><span class="lbl">Definitely yes</span></label></div>
+      </div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-label">What would you need for a pilot to be successful? (Select all that apply)</div>
+      <div class="check-grid">
+        <label class="check-item"><input type="checkbox" name="q8_2" value="onboarding"> Dedicated onboarding support</label>
+        <label class="check-item"><input type="checkbox" name="q8_2" value="training"> Training for clinical staff</label>
+        <label class="check-item"><input type="checkbox" name="q8_2" value="compatibility"> Compatibility with our current systems</label>
+        <label class="check-item"><input type="checkbox" name="q8_2" value="local-data"> Patient data stays in our network</label>
+        <label class="check-item"><input type="checkbox" name="q8_2" value="regulatory"> Regulatory / MoH clearance first</label>
+        <label class="check-item"><input type="checkbox" name="q8_2" value="metrics"> Agreed outcome metrics before starting</label>
+        <label class="check-item"><input type="checkbox" name="q8_2" value="leadership"> Senior leadership approval</label>
+        <label class="check-item"><input type="checkbox" name="q8_2" value="nothing"> Nothing — ready to start now</label>
+      </div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-label">Would you be willing to join a 30-minute follow-up interview?</div>
+      <select id="q8_3">
+        <option value="">Select…</option>
+        <option>Yes — happy to participate</option>
+        <option>Maybe — depends on timing</option>
+        <option>No, not available</option>
+      </select>
+    </div>
+
+    <div class="q-block">
+      <div class="q-label">Would you refer MedVision to a colleague if you found it valuable?</div>
+      <div class="likert-wrap">
+        <div class="likert-option"><input type="radio" name="q8_4" id="q8_4_1" value="1"><label for="q8_4_1"><span class="num">1</span><span class="lbl">Definitely not</span></label></div>
+        <div class="likert-option"><input type="radio" name="q8_4" id="q8_4_2" value="2"><label for="q8_4_2"><span class="num">2</span><span class="lbl">Unlikely</span></label></div>
+        <div class="likert-option"><input type="radio" name="q8_4" id="q8_4_3" value="3"><label for="q8_4_3"><span class="num">3</span><span class="lbl">Maybe</span></label></div>
+        <div class="likert-option"><input type="radio" name="q8_4" id="q8_4_4" value="4"><label for="q8_4_4"><span class="num">4</span><span class="lbl">Likely</span></label></div>
+        <div class="likert-option"><input type="radio" name="q8_4" id="q8_4_5" value="5"><label for="q8_4_5"><span class="num">5</span><span class="lbl">Definitely</span></label></div>
+      </div>
+    </div>
+
+    <div class="q-block">
+      <div class="q-label">Would your organization consider a co-development or design partnership?</div>
+      <select id="q8_5">
+        <option value="">Select…</option>
+        <option>Yes — very interested</option>
+        <option>Possibly — would want more information</option>
+        <option>No — prefer to wait for the finished product</option>
+        <option>Not appropriate for our organization</option>
+      </select>
+    </div>
+
+    <div class="q-block">
+      <div class="q-label">Contact information for pilot follow-up (optional)</div>
+      <div class="q-hint">Leaving your contact details does not commit you to anything. Only used for follow-up by the MedVision team.</div>
+      <input type="text" id="q8_6" placeholder="Name / Email / WhatsApp number (optional)">
+    </div>
+
+    <div class="q-block">
+      <div class="q-label">Any final comments, suggestions, or questions about MedVision?</div>
+      <textarea id="q8_7" placeholder="Any final thoughts — questions, suggestions, concerns, or encouragement…"></textarea>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn" onclick="navigate(-1)">← Back</button>
+      <button class="btn btn-submit" onclick="submitSurvey()">Submit Responses ✓</button>
+    </div>
+  </div>
+
+</main>
+
+<!-- THANK YOU PAGE -->
+<div id="thank-you">
+  <main style="max-width:720px;margin:2rem auto;padding:0 1rem">
+    <div class="ty-hero">
+      <div class="ty-icon">✓</div>
+      <h2>Thank you for your time</h2>
+      <p>Your responses have been recorded. This research will directly shape the development of AI medical imaging tools for Afghan healthcare professionals.</p>
+    </div>
+
+    <div id="verdict-display"></div>
+
+    <div class="score-widget">
+      <h3 style="font-size:14px;font-weight:700;color:var(--blue-deep);text-transform:uppercase;letter-spacing:.06em;margin-bottom:1rem;padding-bottom:.75rem;border-bottom:1px solid var(--border)">Your response signal scores</h3>
+      <div id="score-bars-display"></div>
+      <p style="font-size:11px;color:var(--muted);margin-top:.75rem">Scores are based on your individual responses. Statistical validity requires n ≥ 30 respondents per segment.</p>
+    </div>
+
+    <div class="summary-card" id="summary-display">
+      <h3>Your response summary</h3>
+      <div id="summary-rows"></div>
+    </div>
+
+    <div style="text-align:center;margin-top:1.5rem;padding:1.5rem;background:var(--white);border:1px solid var(--border);border-radius:var(--radius)">
+      <p style="font-size:14px;color:var(--muted);margin-bottom:.75rem">Share this survey with colleagues</p>
+      <p style="font-size:13px;color:var(--blue-deep);font-weight:600;word-break:break-all" id="share-url">medvision-afghanistan-survey.html</p>
+      <button class="btn btn-primary" style="margin-top:.75rem" onclick="window.print()">Print / Save as PDF</button>
+    </div>
+  </main>
+</div>
+
+<script>
+let currentSection = 0;
+const totalSections = 8;
+const visited = new Set([0]);
+
+function navigate(dir) {
+  const next = currentSection + dir;
+  if (next < 0 || next >= totalSections) return;
+  document.getElementById('sec-' + currentSection).classList.remove('active');
+  const dot = document.querySelectorAll('.step-dot')[currentSection];
+  dot.classList.remove('active');
+  dot.classList.add('done');
+  currentSection = next;
+  visited.add(next);
+  document.getElementById('sec-' + currentSection).classList.add('active');
+  const newDot = document.querySelectorAll('.step-dot')[currentSection];
+  newDot.classList.add('active');
+  newDot.classList.remove('done');
+  updateProgress();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function jumpTo(idx) {
+  if (!visited.has(idx) && idx > currentSection + 1) return;
+  document.getElementById('sec-' + currentSection).classList.remove('active');
+  document.querySelectorAll('.step-dot')[currentSection].classList.remove('active');
+  if (idx !== currentSection) document.querySelectorAll('.step-dot')[currentSection].classList.add('done');
+  currentSection = idx;
+  visited.add(idx);
+  document.getElementById('sec-' + currentSection).classList.add('active');
+  document.querySelectorAll('.step-dot')[currentSection].classList.add('active');
+  document.querySelectorAll('.step-dot')[currentSection].classList.remove('done');
+  updateProgress();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateProgress() {
+  const pct = Math.round(((currentSection + 1) / totalSections) * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-pct').textContent = pct + '%';
+  document.getElementById('progress-label').textContent = 'Section ' + (currentSection + 1) + ' of ' + totalSections;
+}
+
+// Drag and drop ranking
+function initRank(listId) {
+  const ul = document.getElementById(listId);
+  if (!ul) return;
+  let dragged = null;
+  ul.querySelectorAll('li').forEach(li => {
+    li.addEventListener('dragstart', () => { dragged = li; li.classList.add('dragging'); });
+    li.addEventListener('dragend', () => { li.classList.remove('dragging'); updateNums(ul); });
+    li.addEventListener('dragover', e => {
+      e.preventDefault();
+      const r = li.getBoundingClientRect();
+      if (e.clientY < r.top + r.height / 2) ul.insertBefore(dragged, li);
+      else ul.insertBefore(dragged, li.nextSibling);
+    });
+    li.addEventListener('dragenter', e => { e.preventDefault(); li.classList.add('drag-over'); });
+    li.addEventListener('dragleave', () => li.classList.remove('drag-over'));
+    li.addEventListener('drop', () => li.classList.remove('drag-over'));
+  });
+}
+function updateNums(ul) {
+  ul.querySelectorAll('.rank-num').forEach((el, i) => el.textContent = i + 1);
+}
+initRank('rank-q5_1');
+
+// Scoring
+function getRadioVal(name) {
+  const sel = document.querySelector('input[name="' + name + '"]:checked');
+  return sel ? parseInt(sel.value) : null;
+}
+function toScore(val) { return val ? Math.round((val / 5) * 100) : 0; }
+
+function computeScores() {
+  const pain = avg([getRadioVal('q3_1'), getRadioVal('q3_2'), getRadioVal('q3_3'), getRadioVal('q3_6')]);
+  const trust = avg([getRadioVal('q4_2'), getRadioVal('q4_3')]);
+  const useful = avg([getRadioVal('q4_1')]);
+  const wtp = avg([getRadioVal('q6_7')]);
+  const pilot = avg([getRadioVal('q8_1')]);
+  const sat = getRadioVal('q2_4');
+  const inadequacy = sat ? Math.round(((6 - sat) / 5) * 100) : 0;
+  return { pain, trust, useful, wtp, pilot, inadequacy };
+}
+function avg(arr) {
+  const valid = arr.filter(x => x !== null);
+  return valid.length ? Math.round((valid.reduce((a, b) => a + b, 0) / valid.length / 5) * 100) : 0;
+}
+
+function getVerdict(s) {
+  const goCount = [s.pain >= 70, s.trust >= 65, s.wtp >= 50, s.pilot >= 35, s.inadequacy >= 65].filter(Boolean).length;
+  if (s.pain >= 70 && s.wtp >= 50 && goCount >= 4) return 'go';
+  if (s.pain >= 50 || (s.trust >= 65 && s.wtp >= 30)) return 'pivot';
+  return 'nogo';
+}
+
+function getSelectVal(id) {
+  const el = document.getElementById(id);
+  return el && el.value ? el.value : '—';
+}
+
+// ─────────────────────────────────────────────────────────────
+//  AIRTABLE CONFIGURATION — fill these three values in
+// ─────────────────────────────────────────────────────────────
+const AIRTABLE_API_KEY  = 'YOUR_AIRTABLE_API_KEY';   // e.g. patXXXXXXXXXXXXXX
+const AIRTABLE_BASE_ID  = 'YOUR_BASE_ID';             // e.g. appXXXXXXXXXXXXXX
+const AIRTABLE_TABLE    = 'Survey Responses';         // must match your table name exactly
+// ─────────────────────────────────────────────────────────────
+
+function collectCheckboxes(name) {
+  return [...document.querySelectorAll(`input[name="${name}"]:checked`)]
+    .map(el => el.value).join(', ') || '—';
+}
+
+function getRankOrder(listId) {
+  return [...document.querySelectorAll(`#${listId} li`)]
+    .map((li, i) => `${i+1}. ${li.textContent.trim().replace(/^[0-9]+[⠿\s]+/, '')}`)
+    .join(' | ');
+}
+
+function collectAllFields() {
+  const scores = computeScores();
+  const v = getVerdict(scores);
+  return {
+    // ── Section 1: Respondent ──────────────────────────────
+    'S1: Role':                    getSelectVal('q1_1'),
+    'S1: Specialty':               document.getElementById('q1_2').value || '—',
+    'S1: Experience':              getSelectVal('q1_3'),
+    'S1: Organization Type':       getSelectVal('q1_4'),
+    'S1: City':                    document.getElementById('q1_5').value || '—',
+    'S1: Monthly Patients':        getSelectVal('q1_6'),
+    'S1: Monthly Images':          getSelectVal('q1_7'),
+    'S1: Purchasing Authority':    getRadioVal('q1_8') ? String(getRadioVal('q1_8')) : '—',
+    // ── Section 2: Workflow ────────────────────────────────
+    'S2: Reporting Process':       getSelectVal('q2_1'),
+    'S2: Turnaround Time':         getSelectVal('q2_2'),
+    'S2: Existing Software':       getSelectVal('q2_3'),
+    'S2: Workflow Satisfaction':   getRadioVal('q2_4') ? String(getRadioVal('q2_4')) : '—',
+    'S2: Outsources Imaging':      getSelectVal('q2_5'),
+    'S2: Biggest Workflow Problem':document.getElementById('q2_6').value || '—',
+    // ── Section 3: Pain Points ─────────────────────────────
+    'S3: Delay Frequency':         getRadioVal('q3_1') ? String(getRadioVal('q3_1')) : '—',
+    'S3: Delay Patient Impact':    getRadioVal('q3_2') ? String(getRadioVal('q3_2')) : '—',
+    'S3: Radiologist Shortage':    getRadioVal('q3_3') ? String(getRadioVal('q3_3')) : '—',
+    'S3: Second Opinion Frequency':getSelectVal('q3_4'),
+    'S3: Reporting Cost Rating':   getRadioVal('q3_5') ? String(getRadioVal('q3_5')) : '—',
+    'S3: Missed Findings Concern': getRadioVal('q3_6') ? String(getRadioVal('q3_6')) : '—',
+    'S3: Workload Pressure':       getRadioVal('q3_7') ? String(getRadioVal('q3_7')) : '—',
+    'S3: Top Problem (Open)':      document.getElementById('q3_8').value || '—',
+    // ── Section 4: AI Acceptance ───────────────────────────
+    'S4: Perceived Usefulness':    getRadioVal('q4_1') ? String(getRadioVal('q4_1')) : '—',
+    'S4: AI Trust Level':          getRadioVal('q4_2') ? String(getRadioVal('q4_2')) : '—',
+    'S4: Adoption Likelihood':     getRadioVal('q4_3') ? String(getRadioVal('q4_3')) : '—',
+    'S4: Min Accuracy Required':   getSelectVal('q4_4'),
+    'S4: Evidence Required':       collectCheckboxes('q4_5'),
+    'S4: Biggest AI Concern':      document.getElementById('q4_6').value || '—',
+    // ── Section 5: Product Features ───────────────────────
+    'S5: Feature Ranking':         getRankOrder('rank-q5_1'),
+    'S5: PACS Integration Need':   getRadioVal('q5_2') ? String(getRadioVal('q5_2')) : '—',
+    'S5: DICOM Support Need':      getRadioVal('q5_3') ? String(getRadioVal('q5_3')) : '—',
+    'S5: Modalities Needed':       collectCheckboxes('q5_4'),
+    'S5: Deployment Preference':   getSelectVal('q5_5'),
+    'S5: Missing Feature':         document.getElementById('q5_6').value || '—',
+    // ── Section 6: Pricing ─────────────────────────────────
+    'S6: Current Monthly Spend':   getSelectVal('q6_1'),
+    'S6: VW Too Cheap':            getSelectVal('q6_2'),
+    'S6: VW Cheap (Good Deal)':    getSelectVal('q6_3'),
+    'S6: VW Expensive':            getSelectVal('q6_4'),
+    'S6: VW Too Expensive':        getSelectVal('q6_5'),
+    'S6: Preferred Pricing Model': getSelectVal('q6_6'),
+    'S6: WTP for Speed Gain':      getRadioVal('q6_7') ? String(getRadioVal('q6_7')) : '—',
+    // ── Section 7: Trust & Security ───────────────────────
+    'S7: Cloud Data Concern':      getRadioVal('q7_1') ? String(getRadioVal('q7_1')) : '—',
+    'S7: Local Hosting Required':  getSelectVal('q7_2'),
+    'S7: Audit Trail Need':        getRadioVal('q7_3') ? String(getRadioVal('q7_3')) : '—',
+    'S7: Regulatory Awareness':    getSelectVal('q7_4'),
+    'S7: Approval Authority':      getSelectVal('q7_5'),
+    'S7: Local AI Preference':     getRadioVal('q7_6') ? String(getRadioVal('q7_6')) : '—',
+    'S7: Key Security Requirement':document.getElementById('q7_7').value || '—',
+    // ── Section 8: Pilot ──────────────────────────────────
+    'S8: Pilot Interest':          getRadioVal('q8_1') ? String(getRadioVal('q8_1')) : '—',
+    'S8: Pilot Requirements':      collectCheckboxes('q8_2'),
+    'S8: Interview Willing':       getSelectVal('q8_3'),
+    'S8: Referral Intent':         getRadioVal('q8_4') ? String(getRadioVal('q8_4')) : '—',
+    'S8: Design Partner Interest': getSelectVal('q8_5'),
+    'S8: Contact Info':            document.getElementById('q8_6').value || '—',
+    'S8: Final Comments':          document.getElementById('q8_7').value || '—',
+    // ── Computed scores ────────────────────────────────────
+    'Score: Pain (%)':             String(scores.pain),
+    'Score: AI Trust (%)':         String(scores.trust),
+    'Score: Usefulness (%)':       String(scores.useful),
+    'Score: WTP (%)':              String(scores.wtp),
+    'Score: Pilot Intent (%)':     String(scores.pilot),
+    'Score: Dissatisfaction (%)':  String(scores.inadequacy),
+    'Score: Verdict':              v.toUpperCase(),
+    // ── Metadata ───────────────────────────────────────────
+    'Meta: Submitted At':          new Date().toISOString(),
+    'Meta: Language':              navigator.language || '—',
+    'Meta: Device':                /Mobi|Android/i.test(navigator.userAgent) ? 'Mobile' : 'Desktop',
+  };
+}
+
+async function sendToAirtable(fields) {
+  const configured = AIRTABLE_API_KEY !== 'YOUR_AIRTABLE_API_KEY'
+                  && AIRTABLE_BASE_ID !== 'YOUR_BASE_ID';
+  if (!configured) {
+    console.warn('Airtable not configured — response logged to console only:', fields);
+    return { ok: false, notConfigured: true };
+  }
+  try {
+    const res = await fetch(
+      `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(AIRTABLE_TABLE)}`,
+      {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${AIRTABLE_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ fields })
+      }
+    );
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error?.message || res.statusText);
+    return { ok: true, id: data.id };
+  } catch (err) {
+    return { ok: false, error: err.message };
+  }
+}
+
+async function submitSurvey() {
+  // Show loading state
+  const submitBtn = document.querySelector('.btn-submit');
+  submitBtn.textContent = 'Saving…';
+  submitBtn.disabled = true;
+
+  const fields = collectAllFields();
+  const result = await sendToAirtable(fields);
+
+  // Hide survey, show thank-you
+  document.getElementById('survey-main').style.display = 'none';
+  document.getElementById('thank-you').style.display = 'block';
+  document.querySelector('.progress-bar-wrap').style.display = 'none';
+  document.querySelector('.steps-nav').style.display = 'none';
+  document.getElementById('share-url').textContent = window.location.href;
+
+  // Airtable status banner
+  const statusEl = document.getElementById('airtable-status');
+  if (result.notConfigured) {
+    statusEl.innerHTML = `
+      <div style="background:#FEF6E4;border:1.5px solid #F0A832;border-radius:10px;padding:1rem 1.25rem;margin-bottom:1.25rem">
+        <p style="font-size:13px;font-weight:700;color:#7A4A05;margin-bottom:.3rem">⚠ Airtable not connected yet</p>
+        <p style="font-size:13px;color:#7A4A05;line-height:1.6">Your response was <strong>not saved to Airtable</strong> because the API key and Base ID are still placeholders. See the setup guide at the bottom of this page to connect your account. All 52 fields are ready to send — you just need to add your credentials.</p>
+      </div>`;
+  } else if (result.ok) {
+    statusEl.innerHTML = `
+      <div style="background:#EBF7F0;border:1.5px solid #3DBE87;border-radius:10px;padding:1rem 1.25rem;margin-bottom:1.25rem">
+        <p style="font-size:13px;font-weight:700;color:#0B6E3C;margin-bottom:.3rem">✓ Saved to Airtable</p>
+        <p style="font-size:13px;color:#145C32;line-height:1.6">Response stored successfully. Record ID: <code style="font-size:12px;background:#d4f0e4;padding:2px 6px;border-radius:4px">${result.id}</code></p>
+      </div>`;
+  } else {
+    statusEl.innerHTML = `
+      <div style="background:#FDECEA;border:1.5px solid #E57373;border-radius:10px;padding:1rem 1.25rem;margin-bottom:1.25rem">
+        <p style="font-size:13px;font-weight:700;color:#8B1A1A;margin-bottom:.3rem">✗ Airtable save failed</p>
+        <p style="font-size:13px;color:#8B1A1A;line-height:1.6">Error: ${result.error}. Check that your API key, Base ID, and table name are correct. Your response data is shown below for manual entry.</p>
+      </div>`;
+  }
+
+  // Verdict
+  const scores = computeScores();
+  const v = getVerdict(scores);
+  const vData = {
+    go:    { cls: 'go',    icon: '✓',  title: 'Your response signals: GO',     desc: 'Your answers indicate significant pain, meaningful AI trust, and willingness to pay. These are positive signals for product development. When aggregated across 30+ respondents, this pattern supports proceeding to a pilot program and MVP build.' },
+    pivot: { cls: 'pivot', icon: '⚡', title: 'Your response signals: PIVOT',  desc: 'Your answers show real problems exist, but some dimensions need adjustment — pricing, trust, or feature set may need rethinking. This is valuable signal. Pivoting to address these gaps is better than building without validation.' },
+    nogo:  { cls: 'nogo',  icon: '✗',  title: 'Your response signals: NO-GO',  desc: 'Based on your responses, the core assumptions are not yet validated. The problem may be insufficient, AI trust too low, or willingness to pay not viable. More discovery work is needed before investment.' }
+  }[v];
+
+  document.getElementById('verdict-display').innerHTML = `
+    <div class="verdict-banner ${vData.cls}">
+      <h3>${vData.icon} ${vData.title}</h3>
+      <p>${vData.desc}</p>
+    </div>`;
+
+  const dims = [
+    { label: 'Problem pain score',    val: scores.pain,        thresh: 70 },
+    { label: 'AI trust score',        val: scores.trust,       thresh: 65 },
+    { label: 'Perceived usefulness',  val: scores.useful,      thresh: 70 },
+    { label: 'Willingness to pay',    val: scores.wtp,         thresh: 50 },
+    { label: 'Pilot interest',        val: scores.pilot,       thresh: 35 },
+    { label: 'Current dissatisfaction', val: scores.inadequacy, thresh: 65 }
+  ];
+  document.getElementById('score-bars-display').innerHTML = dims.map(d => {
+    const color = d.val >= d.thresh ? '#1A8A60' : d.val >= d.thresh * 0.7 ? '#C97A0A' : '#C0392B';
+    return `<div class="score-bar-row">
+      <div class="label">${d.label}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${d.val}%;background:${color}"></div></div>
+      <div class="bar-pct" style="color:${color}">${d.val}%<span style="color:#aaa;font-weight:400"> / ${d.thresh}%</span></div>
+    </div>`;
+  }).join('');
+
+  const summary = [
+    { k: 'Role',                    v: getSelectVal('q1_1') },
+    { k: 'Organization type',       v: getSelectVal('q1_4') },
+    { k: 'City',                    v: document.getElementById('q1_5').value || '—' },
+    { k: 'Monthly imaging volume',  v: getSelectVal('q1_7') },
+    { k: 'Report turnaround',       v: getSelectVal('q2_2') },
+    { k: 'Preferred pricing model', v: getSelectVal('q6_6') },
+    { k: 'Deployment preference',   v: getSelectVal('q5_5') },
+    { k: 'Pilot interest (1–5)',    v: getRadioVal('q8_1') ? getRadioVal('q8_1') + '/5' : '—' },
+    { k: 'Follow-up interview',     v: getSelectVal('q8_3') },
+    { k: 'Verdict',                 v: v.toUpperCase() }
+  ];
+  document.getElementById('summary-rows').innerHTML = summary.map(r =>
+    `<div class="summary-row"><span class="s-key">${r.k}</span><span class="s-val">${r.v}</span></div>`
+  ).join('');
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
